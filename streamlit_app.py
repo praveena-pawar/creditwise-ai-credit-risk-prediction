@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import joblib
+import requests
 
 with st.sidebar:
     st.header("🏦 CreditWise")
@@ -39,9 +39,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
-# Load trained model
-model = joblib.load("models/xgboost_model.pkl")
 
 
 
@@ -318,14 +315,40 @@ if st.button("🔍 Predict Loan Eligibility", use_container_width=True):
     # ---------------------------------
     # Prediction
     # ---------------------------------
+    api_url = "https://creditwise-api-praveen.onrender.com/predict"
 
-    prediction = model.predict(input_df)
+    payload = {
+        "applicant_income": applicant_income,
+        "coapplicant_income": coapplicant_income,
+        "age": age,
+        "dependents": dependents,
+        "credit_score": credit_score,
+        "existing_loans": existing_loans,
+        "dti_ratio": dti_ratio,
+        "savings": savings,
+        "collateral_value": collateral_value,
+        "loan_amount": loan_amount,
+        "loan_term": loan_term,
+        "education_level": education_level,
+        "employment_status": employment_status,
+        "marital_status": marital_status,
+        "loan_purpose": loan_purpose,
+        "property_area": property_area,
+        "gender": gender,
+        "employer_category": employer_category
+    }
 
-    probability = model.predict_proba(input_df)
+    response = requests.post(api_url, json=payload)
 
-    confidence = float(round(max(probability[0]) * 100, 2))
+    if response.status_code == 200:
+        result = response.json()
 
-    loan_status = "Approved" if prediction[0] == 1 else "Rejected"
+        loan_status = result["loan_status"]
+        confidence = float(result["confidence"].replace("%", ""))
+
+    else:
+        st.error(f"API Error: {response.status_code}")
+        st.stop()
 
 
 
@@ -453,12 +476,12 @@ if st.button("🔍 Predict Loan Eligibility", use_container_width=True):
     summary = {
         "Applicant Income": f"₹{applicant_income:,}",
         "Coapplicant Income": f"₹{coapplicant_income:,}",
-        "Credit Score": credit_score,
+        "Credit Score": str(credit_score),
         "Loan Amount": f"₹{loan_amount:,}",
         "Savings": f"₹{savings:,}",
-        "Employment": employment_status,
-        "Loan Purpose": loan_purpose,
-        "Property Area": property_area
+        "Employment": str(employment_status),
+        "Loan Purpose": str(loan_purpose),
+        "Property Area": str(property_area)
     }
 
     summary_df = pd.DataFrame(
@@ -468,7 +491,7 @@ if st.button("🔍 Predict Loan Eligibility", use_container_width=True):
 
     st.dataframe(
         summary_df,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
