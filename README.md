@@ -209,25 +209,25 @@ Example Response
 
 ### 🏠 Home Page
 
-![Home Page](screenshots/home-page.png)
+![Home Page](Screenshots/home-page.png)
 
 ---
 
 ### ✅ Loan Approved
 
-![Loan Approved](screenshots/approved-loan.png)
+![Loan Approved](Screenshots/approved-loan.png)
 
 ---
 
 ### ❌ Loan Rejected
 
-![Loan Rejected](screenshots/rejected-loan.png)
+![Loan Rejected](Screenshots/rejected-loan.png)
 
 ---
 
 ### 📚 Applicant Summary
 
-![API Docs](screenshots/applicant_summary.png)
+![API Docs](Screenshots/applicant_summary.png)
 
 ## 🎯 Future Improvements
 
